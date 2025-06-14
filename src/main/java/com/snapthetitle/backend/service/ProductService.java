@@ -1,3 +1,4 @@
+// src/main/java/com/snapthetitle/backend/service/ProductService.java
 package com.snapthetitle.backend.service;
 
 import com.snapthetitle.backend.dto.ProductDto;
@@ -6,9 +7,9 @@ import com.snapthetitle.backend.entity.Product;
 import com.snapthetitle.backend.entity.ProductOption;
 import com.snapthetitle.backend.repository.ProductOptionRepository;
 import com.snapthetitle.backend.repository.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import jakarta.persistence.EntityNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,6 +20,15 @@ import java.util.stream.Collectors;
 public class ProductService {
     private final ProductRepository productRepo;
     private final ProductOptionRepository optionRepo;
+
+    /** 전체 상품 조회 */
+    public List<ProductDto> getAll() {
+        return productRepo
+                .findByDeletedYnOrderByDisplayOrderAsc("N")
+                .stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
 
     /** 연도별 상품 조회 */
     public List<ProductDto> getByYear(Integer year) {
@@ -40,9 +50,9 @@ public class ProductService {
         e.setDeletedYn("N");
         e.setCreatedAt(LocalDateTime.now());
         e.setUpdatedAt(LocalDateTime.now());
+        e.setDisplayOrder(dto.getDisplayOrder());
         Product saved = productRepo.save(e);
 
-        // 옵션 생성
         if (dto.getOptions() != null) {
             dto.getOptions().forEach(optDto -> {
                 ProductOption opt = new ProductOption();
@@ -69,9 +79,9 @@ public class ProductService {
         e.setPrice(dto.getPrice());
         e.setImageUrl(dto.getImageUrl());
         e.setUpdatedAt(LocalDateTime.now());
+        e.setDisplayOrder(dto.getDisplayOrder());
         Product updated = productRepo.save(e);
 
-        // 기존 옵션 소프트 삭제
         optionRepo.findByProductIdAndDeletedYnOrderByDisplayOrderAsc(updated.getId(), "N")
                 .forEach(opt -> {
                     opt.setDeletedYn("Y");
@@ -79,7 +89,6 @@ public class ProductService {
                     optionRepo.save(opt);
                 });
 
-        // 새로운 옵션 생성
         if (dto.getOptions() != null) {
             dto.getOptions().forEach(optDto -> {
                 ProductOption opt = new ProductOption();
@@ -105,7 +114,6 @@ public class ProductService {
         productRepo.save(e);
     }
 
-    /** Entity → DTO 매핑 */
     private ProductDto toDto(Product e) {
         ProductDto dto = new ProductDto();
         dto.setId(e.getId());
@@ -117,6 +125,7 @@ public class ProductService {
         dto.setCreatedAt(e.getCreatedAt());
         dto.setUpdatedAt(e.getUpdatedAt());
         dto.setDeletedYn(e.getDeletedYn());
+        dto.setDisplayOrder(e.getDisplayOrder());
 
         List<ProductOptionDto> opts = optionRepo
                 .findByProductIdAndDeletedYnOrderByDisplayOrderAsc(e.getId(), "N")
@@ -128,7 +137,6 @@ public class ProductService {
         return dto;
     }
 
-    /** 옵션 Entity → DTO 매핑 */
     private ProductOptionDto optionToDto(ProductOption e) {
         ProductOptionDto dto = new ProductOptionDto();
         dto.setId(e.getId());

@@ -1,3 +1,0 @@
--- V3__add_display_order_to_products.sql
-ALTER TABLE PRODUCTS
-    ADD COLUMN DISPLAY_ORDER INT NOT NULL DEFAULT 0 COMMENT '정렬 순서';

@@ -1,3 +1,4 @@
+// src/main/java/com/snapthetitle/backend/controller/admin/ProductAdminController.java
 package com.snapthetitle.backend.controller.admin;
 
 import com.snapthetitle.backend.dto.ProductDto;
@@ -15,8 +16,14 @@ public class ProductAdminController {
     private final ProductService service;
 
     @GetMapping
-    public List<ProductDto> list(@RequestParam Integer year) {
-        return service.getByYear(year);
+    public List<ProductDto> list(
+            @RequestParam(value = "year", required = false) Integer year
+    ) {
+        if (year != null) {
+            return service.getByYear(year);
+        } else {
+            return service.getAll();
+        }
     }
 
     @PostMapping
