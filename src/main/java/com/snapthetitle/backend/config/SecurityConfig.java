@@ -28,14 +28,19 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+                        // ✅ 정적 리소스 허용
+                        .requestMatchers("/uploads/**").permitAll()
+                        // 로그인은 누구나
                         .requestMatchers(HttpMethod.POST, "/api/admin/login").permitAll()
+                        // 관리자만 접근 가능
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        // 그 외는 인증 필요
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // JWT 필터를 익명 인증 필터(AnonymousAuthenticationFilter)보다 먼저 실행
                 .addFilterBefore(jwtFilter, AnonymousAuthenticationFilter.class);
 
         return http.build();
     }
+
 }

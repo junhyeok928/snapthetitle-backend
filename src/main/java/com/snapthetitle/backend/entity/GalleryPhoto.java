@@ -13,8 +13,11 @@ public class GalleryPhoto {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "SRC", nullable = false, length = 512)
-    private String src;
+    @Column(name = "CATEGORY", nullable = false, length = 50)
+    private String category;
+
+    @Column(name = "display_order")
+    private Integer displayOrder;
 
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -25,5 +28,15 @@ public class GalleryPhoto {
     @Column(name = "DELETED_YN", nullable = false, length = 1)
     private String deletedYn;
 
-    // getters/setters
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        if (deletedYn == null) deletedYn = "N";
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 }
