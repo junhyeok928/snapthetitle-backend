@@ -28,6 +28,9 @@ public class Attachment {
     @Column(name = "MIME_TYPE", length = 100)
     private String mimeType;
 
+    @Column(name = "IS_THUMBNAIL", nullable = false)
+    private Boolean isThumbnail = false;
+
     @Column(name = "CREATED_AT", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

@@ -6,6 +6,7 @@ import com.snapthetitle.backend.entity.GalleryPhoto;
 import com.snapthetitle.backend.repository.GalleryPhotoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -27,28 +28,46 @@ public class GalleryPhotoService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public GalleryPhotoDto createWithFiles(GalleryPhotoDto dto, MultipartFile[] files) throws IOException {
-        GalleryPhotoDto created = createMetadata(dto);
-        Long id = created.getId();
+        // 1. 메타데이터 먼저 저장 (displayOrder 포함)
+        GalleryPhotoDto createdDto = createMetadata(dto);
+
+        // 2. 저장된 엔티티 ID를 기준으로 다시 조회
+        GalleryPhoto entity = repo.findById(createdDto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("GalleryPhoto not found: " + createdDto.getId()));
+
+        // 3. 첨부파일 저장 (썸네일 포함)
         for (MultipartFile file : files) {
-            attachmentService.storeFileAndCreate("GALLERY_PHOTO", id, file);
+            attachmentService.storeFileAndCreate("GALLERY_PHOTOS", entity.getId(), file);
         }
-        return getById(id);
+
+        // 4. 최종 결과 반환
+        return toDto(entity);
     }
 
+
+    @Transactional
     public GalleryPhotoDto updateWithFiles(Long id, GalleryPhotoDto dto, MultipartFile[] files) throws IOException {
-        // 메타 업데이트
-        GalleryPhotoDto updated = updateMetadata(id, dto);
+        // 1. 기존 엔티티 조회
+        GalleryPhoto entity = repo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("GalleryPhoto not found: " + id));
 
-        // 기존 첨부파일 모두 삭제
-        attachmentService.deleteByEntity("GALLERY_PHOTO", id);
+        // 2. 메타데이터 업데이트
+        entity.setCategory(dto.getCategory());
+        entity.setUpdatedAt(LocalDateTime.now());
+        repo.save(entity);
 
-        // 새 파일 1개 저장 (files 배열의 첫 번째 파일)
-        if (files != null && files.length > 0) {
-            attachmentService.storeFileAndCreate("GALLERY_PHOTO", id, files[0]);
+        // 3. 기존 첨부파일 soft-delete 처리
+        attachmentService.deleteByEntity("GALLERY_PHOTOS", entity.getId());
+
+        // 4. 새 파일 저장 (썸네일 포함)
+        for (MultipartFile file : files) {
+            attachmentService.storeFileAndCreate("GALLERY_PHOTOS", entity.getId(), file);
         }
 
-        return getById(id);
+        // 5. 반환
+        return toDto(entity);
     }
 
 
@@ -108,7 +127,7 @@ public class GalleryPhotoService {
         dto.setCreatedAt(e.getCreatedAt());
         dto.setUpdatedAt(e.getUpdatedAt());
         dto.setDeletedYn(e.getDeletedYn());
-        dto.setAttachments(attachmentService.getByEntity("GALLERY_PHOTO", e.getId()));
+        dto.setAttachments(attachmentService.getByEntity("GALLERY_PHOTOS", e.getId()));
         return dto;
     }
 }

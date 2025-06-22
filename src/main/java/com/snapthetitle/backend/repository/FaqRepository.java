@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface FaqRepository extends JpaRepository<Faq, Long> {
     List<Faq> findByDeletedYnOrderByIdAsc(String deletedYn);
+
+    long countByDeletedYn(String deletedYn);
 }

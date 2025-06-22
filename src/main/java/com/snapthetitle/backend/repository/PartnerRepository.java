@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PartnerRepository extends JpaRepository<Partner, Long> {
     List<Partner> findByDeletedYnOrderByDisplayOrderAsc(String deletedYn);
+    long countByDeletedYn(String deletedYn);
 }

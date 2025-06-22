@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS ATTACHMENTS (
     FILE_URL       VARCHAR(512)     NOT NULL COMMENT '저장된 파일 URL 또는 경로',
     ORIGINAL_NAME  VARCHAR(255)     NOT NULL COMMENT '업로드 당시 원본 파일명',
     MIME_TYPE      VARCHAR(100)     NULL     COMMENT '파일 MIME 타입',
+    IS_THUMBNAIL   BOOLEAN          NOT NULL COMMENT '썸네일 여부',
     CREATED_AT     DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP,
     UPDATED_AT     DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     DELETED_YN     VARCHAR(1)       NOT NULL DEFAULT 'N' COMMENT '삭제 여부 (Y:삭제, N:활성)',
@@ -124,6 +125,23 @@ CREATE TABLE IF NOT EXISTS admin_users (
     role       VARCHAR(20)  NOT NULL DEFAULT 'ADMIN',
     created_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 8. VISIT_LOGS
+CREATE TABLE IF NOT EXISTS VISIT_LOGS (
+                                          ID            BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'PK',
+                                          IP_ADDRESS    VARCHAR(45)     COMMENT '방문자 IP 주소 (IPv6까지 지원)',
+    USER_AGENT    TEXT            COMMENT '브라우저/디바이스 User-Agent 문자열',
+    REFERER       TEXT            COMMENT '이전 페이지 Referer (유입 경로)',
+    URL           VARCHAR(255)    COMMENT '요청한 URL 경로',
+    METHOD        VARCHAR(10)     COMMENT 'HTTP 메서드 (GET, POST 등)',
+    STATUS_CODE   INT             COMMENT '응답 상태 코드 (예: 200, 404)',
+    VISITED_AT    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '방문 시각',
+    PRIMARY KEY (ID),
+    INDEX IDX_VISIT_TIME (VISITED_AT),
+    INDEX IDX_VISIT_URL (URL),
+    INDEX IDX_VISIT_IP (IP_ADDRESS)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='방문자 로그 기록 테이블';
+
 
 -- 초기 관리자 계정 (BCrypt 해시된 비밀번호)
 INSERT INTO admin_users (username, password, role)

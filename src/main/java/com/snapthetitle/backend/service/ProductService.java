@@ -149,4 +149,9 @@ public class ProductService {
         dto.setDeletedYn(e.getDeletedYn());
         return dto;
     }
+
+    /** 등록된 연도 목록 조회 */
+    public List<Integer> getAvailableYears() {
+        return productRepo.findDistinctYears();
+    }
 }

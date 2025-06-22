@@ -17,4 +17,9 @@ public class ProductUserController {
     public List<ProductDto> getByYear(@RequestParam Integer year) {
         return service.getByYear(year);
     }
+
+    @GetMapping("/years")
+    public List<Integer> getAvailableYears() {
+        return service.getAvailableYears();
+    }
 }

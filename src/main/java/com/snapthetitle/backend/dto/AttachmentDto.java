@@ -7,11 +7,12 @@ import java.time.LocalDateTime;
 @Data
 public class AttachmentDto {
     private Long id;
-    private String entityType;   // ex. "GALLERY_PHOTOS", "PRODUCTS"
+    private String entityType;
     private Long entityId;
     private String fileUrl;
     private String originalName;
     private String mimeType;
+    private Boolean isThumbnail;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private String deletedYn;

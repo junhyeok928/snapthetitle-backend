@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface GuideRepository extends JpaRepository<Guide, Long> {
     List<Guide> findByDeletedYnOrderByDisplayOrderAsc(String deletedYn);
+    long countByDeletedYn(String deletedYn);
 }

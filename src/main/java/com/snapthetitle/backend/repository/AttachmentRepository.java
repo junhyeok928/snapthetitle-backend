@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface AttachmentRepository extends JpaRepository<Attachment, Long> {
     List<Attachment> findByEntityTypeAndEntityIdAndDeletedYn(String entityType, Long entityId, String deletedYn);
+
+    List<Attachment> findByEntityTypeAndEntityIdAndIsThumbnailTrue(String entityType, Long entityId);
 }

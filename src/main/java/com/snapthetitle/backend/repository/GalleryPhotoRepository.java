@@ -13,4 +13,7 @@ public interface GalleryPhotoRepository extends JpaRepository<GalleryPhoto, Long
 
     @Query("SELECT COALESCE(MAX(g.displayOrder), 0) FROM GalleryPhoto g WHERE g.deletedYn = 'N'")
     Integer findMaxDisplayOrder();
+
+    // 👉 대시보드용 카운트 메서드 추가
+    long countByDeletedYn(String deletedYn);
 }
