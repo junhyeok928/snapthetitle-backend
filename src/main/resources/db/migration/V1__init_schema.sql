@@ -142,7 +142,15 @@ CREATE TABLE IF NOT EXISTS VISIT_LOGS (
     INDEX IDX_VISIT_IP (IP_ADDRESS)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='방문자 로그 기록 테이블';
 
-
+-- 9 MAIN_PHOTOS
+CREATE TABLE IF NOT EXISTS MAIN_PHOTOS (
+                                           ID BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                                           DISPLAY_ORDER INT NOT NULL DEFAULT 0 COMMENT '출력 순서',
+                                           CREATED_AT DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                           UPDATED_AT DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                           DELETED_YN VARCHAR(1) NOT NULL DEFAULT 'N' COMMENT '삭제 여부 (Y/N)',
+    PRIMARY KEY (ID)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='메인 이미지 테이블';
 -- 초기 관리자 계정 (BCrypt 해시된 비밀번호)
 INSERT INTO admin_users (username, password, role)
 VALUES ('admin', '$2a$10$Dow1YzK1jGxDdZf0H3LhkuO/0wFz5s7Yb3F7zhS1XkJv9QnV2pO2W', 'ADMIN')
