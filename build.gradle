@@ -13,7 +13,7 @@ java {
     }
 }
 springBoot {
-    mainClass = 'com.snapthetitle.SnapthetitleBackendApplication'
+    mainClass = 'com.snapthetitle.backend.SnapthetitleBackendApplication'
 }
 
 configurations {
@@ -43,6 +43,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'com.sksamuel.scrimage:scrimage-core:4.0.32'
     implementation 'com.sksamuel.scrimage:scrimage-webp:4.0.32'
+    implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
 }
 
 tasks.named('test') {
