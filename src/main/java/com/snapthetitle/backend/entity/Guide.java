@@ -2,44 +2,55 @@ package com.snapthetitle.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
 @Entity
-@Table(name = "GUIDES")
+@Table(name = "guides")
 public class Guide {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "CATEGORY", nullable = false, length = 50)
+    @Column(name = "category", nullable = false, length = 50)
     private String category;
 
-    @Column(name = "CONTENT", columnDefinition = "TEXT", nullable = false)
+    @Column(name = "content", nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "LINK_TEXT", length = 100)
+    @Column(name = "link_text", length = 100)
     private String linkText;
 
-    @Column(name = "LINK_URL", length = 255)
+    @Column(name = "link_url", length = 255)
     private String linkUrl;
 
-    @Column(name = "DISPLAY_ORDER", nullable = false)
-    private Integer displayOrder;
+    @Column(name = "display_order", nullable = false)
+    private Integer displayOrder = 0;
 
     @OneToMany(mappedBy = "guide", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<GuideDetail> details;
 
-    @Column(name = "CREATED_AT", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "UPDATED_AT", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "DELETED_YN", nullable = false, length = 1)
-    private String deletedYn;
+    @Column(name = "deleted_yn", nullable = false, length = 1)
+    private String deletedYn = "N";
 
-    // getters/setters
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

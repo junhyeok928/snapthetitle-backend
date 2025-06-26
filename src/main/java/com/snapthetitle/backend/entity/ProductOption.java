@@ -1,39 +1,49 @@
 package com.snapthetitle.backend.entity;
 
-import lombok.Data;
 import jakarta.persistence.*;
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "PRODUCT_OPTIONS")
+@Table(name = "product_options")
 public class ProductOption {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID")
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PRODUCT_ID", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(name = "LABEL", nullable = false, length = 50)
+    @Column(name = "label", nullable = false, length = 50)
     private String label;
 
-    @Column(name = "VALUE", nullable = false, length = 100)
+    @Column(name = "value", nullable = false, length = 100)
     private String value;
 
-    @Column(name = "DISPLAY_ORDER", nullable = false)
-    private Integer displayOrder;
+    @Column(name = "display_order", nullable = false)
+    private Integer displayOrder = 0;
 
-    @Column(name = "CREATED_AT", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "UPDATED_AT", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "DELETED_YN", nullable = false, length = 1)
-    private String deletedYn;
+    @Column(name = "deleted_yn", nullable = false, length = 1)
+    private String deletedYn = "N";
 
-    // getters/setters
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

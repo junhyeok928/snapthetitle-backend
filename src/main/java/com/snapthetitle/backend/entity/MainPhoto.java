@@ -7,28 +7,29 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "MAIN_PHOTOS")
+@Table(name = "main_photos")
 public class MainPhoto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
-    @Column(name = "DISPLAY_ORDER", nullable = false)
-    private Integer displayOrder;
+    @Column(name = "display_order", nullable = false)
+    private Integer displayOrder = 0;
 
-    @Column(name = "CREATED_AT", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "UPDATED_AT", nullable = false)
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "DELETED_YN", nullable = false, length = 1)
-    private String deletedYn;
+    @Column(name = "deleted_yn", nullable = false, length = 1)
+    private String deletedYn = "N";
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = this.updatedAt = LocalDateTime.now();
-        this.deletedYn = "N";
     }
 
     @PreUpdate

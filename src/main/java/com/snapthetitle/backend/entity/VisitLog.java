@@ -7,11 +7,12 @@ import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Table(name = "VISIT_LOGS")
+@Table(name = "visit_logs")
 public class VisitLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "ip_address", length = 45)
@@ -20,18 +21,23 @@ public class VisitLog {
     @Column(name = "user_agent", columnDefinition = "TEXT")
     private String userAgent;
 
-    @Column(columnDefinition = "TEXT")
+    @Column(name = "referer", columnDefinition = "TEXT")
     private String referer;
 
-    @Column(length = 255)
+    @Column(name = "url", length = 255)
     private String url;
 
-    @Column(length = 10)
+    @Column(name = "method", length = 10)
     private String method;
 
     @Column(name = "status_code")
     private Integer statusCode;
 
     @Column(name = "visited_at", nullable = false)
-    private LocalDateTime visitedAt = LocalDateTime.now();
+    private LocalDateTime visitedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.visitedAt = LocalDateTime.now();
+    }
 }
